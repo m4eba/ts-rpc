@@ -1,5 +1,5 @@
-import { MethodSignature, InterfaceDeclaration, SyntaxKind, ParameterDeclaration } from "ts-morph";
-
+import { TSESTree, AST_NODE_TYPES, simpleTraverse } from '@typescript-eslint/typescript-estree';
+import { findMethod } from './utils';
 
 export class SourceBuilder {
   private _indent = '  ';
@@ -28,12 +28,13 @@ export class SourceBuilder {
   }
 }
 
-export function generateEventMessageInterface(builder:SourceBuilder,target:InterfaceDeclaration,method:string):void {  
+export function generateEventMessageInterface(builder:SourceBuilder,target:TSESTree.TSInterfaceDeclaration,method:string):void {  
   const name = method[0].toUpperCase()+method.substr(1);  
-  const m = target.getMethod(method);
+  const m = findMethod(target.body.body,name);
   if ( m === undefined ) {
     throw new Error('method not found');
   }
+  /* TODO
   const returnT = m.getReturnTypeNode();
   if ( returnT === undefined ) {
     throw new Error('returnType node undefined');
@@ -46,14 +47,16 @@ export function generateEventMessageInterface(builder:SourceBuilder,target:Inter
   parameterToInterface(builder,m.getParameters());
   builder.out();
   builder.addLine('}');
+  */
 }
 
+/*
 export function parameterToInterface(builder:SourceBuilder,param:ParameterDeclaration[]):void {
   param.forEach(p=>{
     builder.addLine(`${p.getFullText()};`);
   });
 }
-
+*/
 
 
 

@@ -1,40 +1,31 @@
-import { Project, SyntaxKind, ClassDeclaration } from 'ts-morph';
-import { loadProject } from '../src/generate';
 import { findServiceInterface, findEventInterface } from '../src/utils';
+import { parse } from '@typescript-eslint/typescript-estree';
 
-const project:Project = loadProject(__dirname+'/tsconfig.json');
-const dd = project.getPreEmitDiagnostics();
-if ( dd.length>0) {
-  console.log(project.formatDiagnosticsWithColorAndContext(dd));
-  throw new Error('unable to initialize project');
-}
 
 test('find interfaces', async() => {
-  const name = 'packages/cli/__tests__/common/plugin1.ts';
-  const entryFile = project.getSourceFile(name);
-  if ( !entryFile ) {
-    throw new Error(`unable to getSourceFile: ${name}`);
-  }
-  
-  const i = findEventInterface(entryFile);
-  const s = findServiceInterface(entryFile);
+  const code = `
+  interface Event{}
+  interface Service{}
+  `;
+  const ast = parse(code,{loc:true});
+    
+  const i = findEventInterface(ast);
+  const s = findServiceInterface(ast);
   
 
-  expect(i).toBe(entryFile.getInterface('Event'));
-  expect(s).toBe(entryFile.getInterface('Service'));  
+  expect(i.loc.start.line).toBe(2);
+  expect(s.loc.start.line).toBe(3);  
 });
 
 
 test('missing interface', async() => {
-  const name = 'packages/cli/__tests__/common/missingEventInterface.ts';
-  const entryFile = project.getSourceFile(name);
-  if ( !entryFile ) {
-    throw new Error(`unable to getSourceFile: ${name}`);
-  }
+  const code = `
+  `;
+  const ast = parse(code,{loc:true});
  
   expect.assertions(1);
   try {
-    const i = findEventInterface(entryFile);
+    const i = findEventInterface(ast);
   } catch(e){
     expect(e.toString()).toBe('Error: no event interface found');
     
