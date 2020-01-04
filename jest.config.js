@@ -1,8 +1,7 @@
 
 module.exports = {
   testPathIgnorePatterns: [
-    '/node_modules',
-    'cli/__tests__/common/'
+    '/node_modules'
   ],
   preset: 'ts-jest',
   testEnvironment: 'node',

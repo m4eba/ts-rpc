@@ -1,3 +1,0 @@
-
-interface MisspelledEventInterface {}
-interface Service {}

@@ -1,40 +1,43 @@
-import { Project, SyntaxKind, ClassDeclaration } from 'ts-morph';
+import { Project, SyntaxKind, ClassDeclaration, ScriptTarget } from 'ts-morph';
 import { loadProject } from '../src/generate';
 import { findServiceInterface, findEventInterface } from '../src/utils';
+import { create } from 'istanbul-reports';
 
-const project:Project = loadProject(__dirname+'/tsconfig.json');
-const dd = project.getPreEmitDiagnostics();
-if ( dd.length>0) {
-  console.log(project.formatDiagnosticsWithColorAndContext(dd));
-  throw new Error('unable to initialize project');
+function createProject() {
+  const project:Project = new Project({
+    compilerOptions: {
+      target: ScriptTarget.ES2018
+    }
+  });
+  return project;
 }
 
 test('find interfaces', async() => {
-  const name = 'packages/cli/__tests__/common/plugin1.ts';
-  const entryFile = project.getSourceFile(name);
-  if ( !entryFile ) {
-    throw new Error(`unable to getSourceFile: ${name}`);
-  }
-  
-  const i = findEventInterface(entryFile);
-  const s = findServiceInterface(entryFile);
+  const project = createProject();
+  const file = project.createSourceFile('test.ts',`
+  interface Event {}
+  interface Service {}
+  `);
+    
+  const i = findEventInterface(file);
+  const s = findServiceInterface(file);
   
 
-  expect(i).toBe(entryFile.getInterface('Event'));
-  expect(s).toBe(entryFile.getInterface('Service'));  
+  expect(i).toBe(file.getInterface('Event'));
+  expect(s).toBe(file.getInterface('Service'));  
 });
 
 
 test('missing interface', async() => {
-  const name = 'packages/cli/__tests__/common/missingEventInterface.ts';
-  const entryFile = project.getSourceFile(name);
-  if ( !entryFile ) {
-    throw new Error(`unable to getSourceFile: ${name}`);
-  }
+  const project = createProject();
+  const file = project.createSourceFile('test.ts',`
+  interface MisspelledEventInterface {}
+  interface Service {}
+  `);
  
   expect.assertions(1);
   try {
-    const i = findEventInterface(entryFile);
+    const i = findEventInterface(file);
   } catch(e){
     expect(e.toString()).toBe('Error: no event interface found');
     
