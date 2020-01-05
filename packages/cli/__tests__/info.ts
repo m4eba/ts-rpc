@@ -1,7 +1,6 @@
-import { Project, SyntaxKind, ClassDeclaration, ScriptTarget } from 'ts-morph';
-import { loadProject } from '../src/generate';
+import { Project, ScriptTarget } from 'ts-morph';
 import { findServiceInterface, findEventInterface } from '../src/utils';
-import { create } from 'istanbul-reports';
+
 
 function createProject() {
   const project:Project = new Project({
