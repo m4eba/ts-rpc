@@ -17,7 +17,7 @@ export function findEventInterface(file:SourceFile):InterfaceDeclaration {
   return result;
 }
 
-function findInterface(file:SourceFile,pattern:string):InterfaceDeclaration|undefined {
+export function findInterface(file:SourceFile,pattern:string):InterfaceDeclaration|undefined {
   return file.forEachChild( node=>{
     if (node.getKind() === SyntaxKind.InterfaceDeclaration) {
       const i = node as InterfaceDeclaration;
