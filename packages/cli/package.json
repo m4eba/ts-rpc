@@ -22,6 +22,7 @@
   "dependencies": {
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.0.2",
-    "debug": "^4.1.1"
+    "debug": "^4.1.1",
+    "typescript-formatter": "^7.2.2"
   }
 }
