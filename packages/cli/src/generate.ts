@@ -5,8 +5,6 @@ import {
   ParameterDeclaration
 } from "ts-morph";
 
-import { SourceBuilder } from './builder';
-
 
 
 function upperName(name: string): string {
@@ -44,8 +42,8 @@ export function generateEventEmitter(target: InterfaceDeclaration):string {
     const name = upperName(m.getName());
     methods.push(`
       public ${name}(${params.join(', ')}): ${m.getReturnType().getText()} {
-        const data:${m.getName()}Message = {
-          ${params.join(',\n')}
+        const data:${name}Message = {
+          ${m.getParameters().map(p=>p.getName()).join(',\n')}
         }
       }
     `);
