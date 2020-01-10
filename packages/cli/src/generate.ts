@@ -4,13 +4,11 @@ import {
   SyntaxKind,
   ParameterDeclaration
 } from "ts-morph";
+import { upperName } from "./utils";
 
 
 
-function upperName(name: string): string {
-  if (name.length === 0) return name;
-  return name[0].toUpperCase() + name.substr(1);
-}
+
 export function generateEventMessageInterface(target: InterfaceDeclaration, method: string): string {
   const name = upperName(method);
   const m = target.getMethod(method);
@@ -24,6 +22,7 @@ export function generateEventMessageInterface(target: InterfaceDeclaration, meth
   if (returnT.getKind() !== SyntaxKind.VoidKeyword) {
     throw new Error('event interface does not allow non void return types');
   }
+  // TODO remove annotations/comments and use .print()
   const params = m.getParameters().map(p => p.getFullText());
   return `
     export interface ${name}Message {
@@ -38,10 +37,11 @@ export function generateEventEmitter(target: InterfaceDeclaration):string {
 
   const methods:string[] = [];
   target.getMethods().forEach(m=>{
+    // TODO remove annotations/comments and use .print()
     const params = m.getParameters().map(p => p.getFullText());
     const name = upperName(m.getName());
     methods.push(`
-      public ${name}(${params.join(', ')}): ${m.getReturnType().getText()} {
+      public ${m.getName()}(${params.join(', ')}): ${m.getReturnType().getText()} {
         const data:${name}Message = {
           ${m.getParameters().map(p=>p.getName()).join(',\n')}
         }

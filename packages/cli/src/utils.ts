@@ -1,5 +1,9 @@
 import { SourceFile, ClassDeclaration, SyntaxKind, MethodDeclaration, PropertyDeclaration, InterfaceDeclaration } from "ts-morph";
 
+export function upperName(name: string): string {
+  if (name.length === 0) return name;
+  return name[0].toUpperCase() + name.substr(1);
+}
 
 export function findServiceInterface(file:SourceFile):InterfaceDeclaration {
   const result = findInterface(file,'Service');
