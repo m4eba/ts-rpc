@@ -33,6 +33,26 @@ export interface PacketHandler {
   onEvent(packet: EventPacket, sender: PacketSender): void;
 }
 
+export function isRequest(packet: Packet): packet is RequestPacket {
+  const p = packet as any;
+  return p.result === undefined && p.id != undefined && p.method != undefined;
+}
+
+export function isResponse(packet: Packet): packet is ResponsePacket {
+  const p = packet as any;
+  return p.id != undefined && p.result != undefined;
+}
+
+export function isError(packet: Packet): packet is ErrorPacket {
+  const p = packet as any;
+  return p.id != undefined && p.error != undefined;
+}
+
+export function isEvent(packet: Packet): packet is EventPacket {
+  const p = packet as any;
+  return p.method != undefined && p.result === undefined && p.id === undefined;
+}
+
 export function handlePacket(data: string, handler: PacketHandler, sender: PacketSender): void {
   const packet = JSON.parse(data);
   if (isRequest(packet)) {
@@ -54,22 +74,3 @@ export function handlePacket(data: string, handler: PacketHandler, sender: Packe
   throw new Error(`maleformed packet: ${data}`);
 }
 
-export function isRequest(packet: Packet): packet is RequestPacket {
-  const p = packet as any;
-  return p.result === undefined && p.id != undefined && p.method != undefined;
-}
-
-export function isResponse(packet: Packet): packet is ResponsePacket {
-  const p = packet as any;
-  return p.id != undefined && p.result != undefined;
-}
-
-export function isError(packet: Packet): packet is ErrorPacket {
-  const p = packet as any;
-  return p.id != undefined && p.error != undefined;
-}
-
-export function isEvent(packet: Packet): packet is EventPacket {
-  const p = packet as any;
-  return p.method != undefined && p.result === undefined && p.id === undefined;
-}

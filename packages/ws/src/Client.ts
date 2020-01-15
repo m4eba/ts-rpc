@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 import EventEmitter from 'events';
 import Debug from 'debug';
-import { Packet, EventPacket, isEvent, PacketHandler, isRequest, isResponse, handlePacket, PacketSender } from './Packet';
+import { Packet, PacketHandler, handlePacket, PacketSender } from './Packet';
 
 const debug = Debug('ts-rpc-ws:Client');
 
@@ -68,8 +68,8 @@ class Client extends EventEmitter implements PacketSender {
 
   private handleData(data: string) {
     try {
-      if ( this.ws != null )
-        handlePacket(data,this.handler,this);      
+      if (this.ws != null)
+        handlePacket(data, this.handler, this);
     } catch (e) {
       debug('unable to handle packet %o, %s', e, data);
       return;
@@ -89,3 +89,5 @@ class Client extends EventEmitter implements PacketSender {
     }
   }
 }
+
+export default Client;

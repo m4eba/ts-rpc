@@ -1,9 +1,4 @@
-import {
-  MethodSignature,
-  InterfaceDeclaration,
-  SyntaxKind,
-  ParameterDeclaration
-} from "ts-morph";
+import { InterfaceDeclaration, SyntaxKind } from "ts-morph";
 import { upperName } from "./utils";
 
 
@@ -33,17 +28,17 @@ export function generateEventMessageInterface(target: InterfaceDeclaration, meth
 
 
 
-export function generateEventEmitter(target: InterfaceDeclaration):string {
+export function generateEventEmitter(target: InterfaceDeclaration): string {
 
-  const methods:string[] = [];
-  target.getMethods().forEach(m=>{
+  const methods: string[] = [];
+  target.getMethods().forEach(m => {
     // TODO remove annotations/comments and use .print()
     const params = m.getParameters().map(p => p.getFullText());
     const name = upperName(m.getName());
     methods.push(`
       public ${m.getName()}(${params.join(', ')}): ${m.getReturnType().getText()} {
         const data:${name}Message = {
-          ${m.getParameters().map(p=>p.getName()).join(',\n')}
+          ${m.getParameters().map(p => p.getName()).join(',\n')}
         }
       }
     `);

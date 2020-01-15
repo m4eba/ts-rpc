@@ -1,5 +1,5 @@
 import Path from 'path';
-import { SourceFile, InterfaceDeclaration, SyntaxKind, TypeNode, ClassDeclaration, ScriptTarget, ImportDeclaration } from "ts-morph";
+import { SourceFile, InterfaceDeclaration, SyntaxKind, TypeNode, ClassDeclaration, ImportDeclaration } from "ts-morph";
 
 
 export interface Import {
@@ -43,7 +43,7 @@ function moduleFromImportDeclaration(path: string, imp: ImportDeclaration): stri
     throw new Error('module empty name!');
   }
   if (value[0] === '.') {
-    return Path.relative( Path.dirname(path), value);
+    return Path.relative(Path.dirname(path), value);
   } else {
     return value;
   }
@@ -91,7 +91,8 @@ export function searchImport(path: string, source: SourceFile, name: string): Im
       }
     } // named export
 
-  };
+  }
+
   return undefined;
 }
 
@@ -177,8 +178,8 @@ export function writeImports(imports: Import[]): string {
       return r;
     }, new Set<string>());
     let names: string[] = [];
-    console.log('default import',defaultImport);
-    console.log('named import',namedImportNames);
+    console.log('default import', defaultImport);
+    console.log('named import', namedImportNames);
     if (defaultImport != undefined) {
       names.push(aliasName(defaultImport));
     }

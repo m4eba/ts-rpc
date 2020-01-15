@@ -51,6 +51,7 @@ class Server {
         this.handleData(data as string, context);
       });
       ws.on('close', (code: number, reason: string) => {
+        debug('client close %i %s', code, reason);
         this.clients.splice(this.clients.indexOf(context), 1);
       });
     });

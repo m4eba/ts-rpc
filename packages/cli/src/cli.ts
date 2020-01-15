@@ -77,7 +77,7 @@ if (!args.rootDir) {
 const project = new Project({
   compilerOptions: {
     target: ScriptTarget.ES2018,
-    rootDir:args.rootDir
+    rootDir: args.rootDir
   }
   //tsConfigFilePath:args.tsconfig
 });
@@ -90,26 +90,26 @@ project.addExistingSourceFiles(args.input);
 
   for (let i = 0; i < args.input.length; ++i) {
     const file = project.getSourceFileOrThrow(args.input[i]);
-    const inputModulePath = Path.join(Path.dirname(args.input[i]),file.getBaseNameWithoutExtension());
+    const inputModulePath = Path.join(Path.dirname(args.input[i]), file.getBaseNameWithoutExtension());
 
     const event = findInterface(file, 'Event');
     if (event != undefined) {
-      const eventPathToOut = Path.relative(args.out,inputModulePath);
-      const eventImport = importFromInterface(eventPathToOut,event);
-      if ( eventImport === undefined ) {
+      const eventPathToOut = Path.relative(args.out, inputModulePath);
+      const eventImport = importFromInterface(eventPathToOut, event);
+      if (eventImport === undefined) {
         console.log(`interface ${event.getName()} is not exported from file ${args.input[i]}`);
         process.exit(1);
         return;
       }
 
-      const paramImports = importsFromParams(eventPathToOut,file,event);
-      let messageImports:Import[] = [];
+      const paramImports = importsFromParams(eventPathToOut, file, event);
+      let messageImports: Import[] = [];
       let messages = writeImports(paramImports);
       event.getMethods().forEach(m => {
         messages += '\n';
         messages += generateEventMessageInterface(event, m.getName());
         messageImports.push({
-          module:`./${event.getName()}Messages`,
+          module: `./${event.getName()}Messages`,
           name: `${upperName(m.getName())}Message`
         });
       });

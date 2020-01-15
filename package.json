@@ -1,11 +1,19 @@
 {
   "name": "root",
   "private": true,
+  "scripts": {
+    "lint": "eslint 'packages/**/**/*.ts'",
+    "lint-fix": "eslint 'packages/**/**/*.ts' --fix"
+  },
   "devDependencies": {
-    "lerna": "^3.19.0",
     "@types/jest": "^24.0.17",
     "@types/node": "^12.6.9",
+    "@typescript-eslint/eslint-plugin": "^2.16.0",
+    "@typescript-eslint/parser": "^2.16.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.6.0",
     "jest": "^24.8.0",
+    "lerna": "^3.19.0",
     "lerna-update-wizard": "^0.16.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.5.3"
