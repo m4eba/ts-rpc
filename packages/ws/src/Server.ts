@@ -17,7 +17,7 @@ class ClientContext implements PacketSender {
   }
 }
 
-class Server {
+class Server implements PacketSender {
   private port: number;
   private handler: PacketHandler;
   private server: WebSocket.Server | null = null;
