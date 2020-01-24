@@ -4,7 +4,9 @@
   "version": "0.0.1",
   "description": "> TODO: description",
   "author": "m4eba <m4eba.0@gmail.com>",
-  "bin": "build/cli.js",
+  "bin": {
+    "ts-rpc": "build/cli.js"
+  },
   "license": "MIT",
   "scripts": {
     "compile": "tsc -b .",

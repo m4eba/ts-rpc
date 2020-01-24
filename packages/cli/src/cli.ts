@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import Path from 'path';
 import Usage from 'command-line-usage';
 import Args from 'command-line-args';
