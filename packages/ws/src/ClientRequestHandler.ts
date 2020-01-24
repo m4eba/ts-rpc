@@ -6,7 +6,7 @@ interface Request {
   reject: (error: any) => void;
   timeout: NodeJS.Timeout;
 }
-class ClientRequestHandler implements PacketHandler {
+export class ClientRequestHandler implements PacketHandler {
   private sender: PacketSender;
   private idCount: number = 1;
   private timeout = 3 * 60 * 1000;
@@ -61,5 +61,3 @@ class ClientRequestHandler implements PacketHandler {
     this.idMap.delete(id);
   }
 }
-
-export default ClientRequestHandler;

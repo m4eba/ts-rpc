@@ -17,7 +17,7 @@ class ClientContext implements PacketSender {
   }
 }
 
-class Server implements PacketSender {
+export class Server implements PacketSender {
   private port: number;
   private handler: PacketHandler;
   private server: WebSocket.Server | null = null;
@@ -69,5 +69,3 @@ class Server implements PacketSender {
     this.clients.forEach(c => c.send(packet));
   }
 }
-
-export default Server;

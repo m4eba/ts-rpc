@@ -5,7 +5,7 @@ import { Packet, PacketHandler, handlePacket, PacketSender } from './Packet';
 
 const debug = Debug('ts-rpc-ws:Client');
 
-class Client extends EventEmitter implements PacketSender {
+export class Client extends EventEmitter implements PacketSender {
   private ws: WebSocket | null = null;
   private handler: PacketHandler;
   private ready: boolean = false;
@@ -89,5 +89,3 @@ class Client extends EventEmitter implements PacketSender {
     }
   }
 }
-
-export default Client;

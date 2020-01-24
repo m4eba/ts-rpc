@@ -5,7 +5,7 @@ const debug = Debug('ts-rpc-ws:ServerHandler');
 
 export type ServiceResolver = (method: string, params: any) => Promise<any>;
 
-class ServerHandler implements PacketHandler {
+export class ServerHandler implements PacketHandler {
   private services: Map<string, ServiceResolver> = new Map();
 
   constructor() {
@@ -56,5 +56,3 @@ class ServerHandler implements PacketHandler {
     debug('event packet?!?');
   }
 }
-
-export default ServerHandler;
