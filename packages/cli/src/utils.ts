@@ -1,8 +1,18 @@
-import { SourceFile, SyntaxKind, InterfaceDeclaration } from "ts-morph";
+import { SourceFile, SyntaxKind, InterfaceDeclaration, MethodSignature } from "ts-morph";
 
 export function upperName(name: string): string {
   if (name.length === 0) return name;
   return name[0].toUpperCase() + name.substr(1);
+}
+
+export function packagedMethodName(target: InterfaceDeclaration, method: MethodSignature): string {
+  let name = target.getName();
+  ['Event', 'Service'].forEach(e => {
+    if (name.endsWith(e)) {
+      name = name.substr(0, name.length - e.length);
+    }
+  });
+  return `${name}.${method.getName()}`;
 }
 
 export function findInterface(file: SourceFile, pattern: string): InterfaceDeclaration | undefined {

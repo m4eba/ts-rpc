@@ -102,7 +102,15 @@ export function importsFromParams(path: string, source: SourceFile, target: Inte
 
   function addType(node: TypeNode) {
     if (node.getKind() === SyntaxKind.TypeReference) {
-      types.push(node.getText());
+      const ident = node.getChildAtIndexIfKind(0, SyntaxKind.Identifier);
+      if (ident === undefined) {
+        console.log('ident undefined????');
+        process.exit(1);
+        return;
+      }
+      types.push(ident.getText());
+      //console.log(node.getText());
+      //console.log(ident.getText());
     }
   }
   target.getMethods().forEach(m => {
@@ -115,6 +123,7 @@ export function importsFromParams(path: string, source: SourceFile, target: Inte
   });
 
   types.forEach(t => {
+
     // search for interfaces
     const intf = source.getInterface(t);
     if (intf != undefined) {
@@ -145,12 +154,12 @@ export function importsFromParams(path: string, source: SourceFile, target: Inte
 
     // search in imports
     const i = searchImport(path, source, t);
-    if (i === undefined) {
-      console.log(`reference ${t} not found in ${path}`);
-      process.exit(1);
+    if (i !== undefined) {
+      result.push(i);
       return;
     }
-    result.push(i);
+
+    // not found we assume it is a language type like Promise
   });
   return result;
 }

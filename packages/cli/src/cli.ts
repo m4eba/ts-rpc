@@ -6,7 +6,14 @@ import { Project, ScriptTarget } from 'ts-morph';
 
 
 import { findInterface, upperName } from './utils';
-import { generateEventMessageInterface, generateEventEmitter } from './generate';
+import {
+  generateEventMessageInterface,
+  generateServiceMessageInterface,
+  generateEventServer,
+  generateEventClient,
+  generateServiceServer,
+  generateServiceClient
+} from './generate';
 import { write } from './file';
 import { importFromInterface, writeImports, importsFromParams, Import } from './imports';
 
@@ -117,23 +124,47 @@ project.addExistingSourceFiles(args.input);
 
       await write(Path.join(args.out, `${event.getName()}Messages.ts`), messages);
 
-      let emitter = writeImports([eventImport].concat(paramImports).concat(messageImports));
-      emitter += generateEventEmitter(event);
-      await write(Path.join(args.out, `${event.getName()}Emitter.ts`), emitter);
+      let eventServer = writeImports([eventImport].concat(paramImports).concat(messageImports));
+      eventServer += generateEventServer(event);
+      await write(Path.join(args.out, `${event.getName()}Server.ts`), eventServer);
+
+      let eventClient = writeImports([eventImport].concat(messageImports));
+      eventClient += generateEventClient(event);
+      await write(Path.join(args.out, `${event.getName()}Client.ts`), eventClient);
     }
 
 
     const service = findInterface(file, 'Service');
     if (service != undefined) {
-      /*
-      const builder = new SourceBuilder();
+      const servicePathToOut = Path.relative(args.out, inputModulePath);
+      const serviceImport = importFromInterface(servicePathToOut, service);
+      if (serviceImport === undefined) {
+        console.log(`interface ${service.getName()} is not exported from file ${args.input[i]}`);
+        process.exit(1);
+        return;
+      }
+
+      const paramImports = importsFromParams(servicePathToOut, file, service);
+      let messageImports: Import[] = [];
+      let messages = writeImports(paramImports);
       service.getMethods().forEach(m => {
-        builder.addLine('');
-        generateEventMessageInterface(builder, service, m.getName());
+        messages += '\n';
+        messages += generateServiceMessageInterface(service, m.getName());
+        messageImports.push({
+          module: `./${service.getName()}Messages`,
+          name: `${upperName(m.getName())}Message`
+        });
       });
 
-      await writeFile(Path.join(args.out, `${service.getName()}Messages.ts`), builder.getSource(), { encoding: 'utf8' });
-      */
+      await write(Path.join(args.out, `${service.getName()}Messages.ts`), messages);
+
+      let serviceServer = writeImports([serviceImport].concat(messageImports));
+      serviceServer += generateServiceServer(service);
+      await write(Path.join(args.out, `${service.getName()}Server.ts`), serviceServer);
+
+      let serviceClient = writeImports([serviceImport].concat(paramImports).concat(messageImports));
+      serviceClient += generateServiceClient(service);
+      await write(Path.join(args.out, `${service.getName()}Client.ts`), serviceClient);
     }
 
   }
