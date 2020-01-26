@@ -20,7 +20,7 @@ export class ServerHandler implements PacketHandler {
     debug('onRequest %o', packet);
     const idx = packet.method.indexOf('.');
     const name = packet.method.substr(0, idx);
-    const method = packet.method.substr(idx);
+    const method = packet.method.substr(idx + 1);
 
     const resolver = this.services.get(name);
     if (resolver === undefined) {
