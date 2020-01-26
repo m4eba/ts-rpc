@@ -7,17 +7,24 @@ interface Request {
   timeout: NodeJS.Timeout;
 }
 export class ClientRequestHandler implements PacketHandler {
-  private sender: PacketSender;
+  private sender: PacketSender | undefined;
   private idCount: number = 1;
   private timeout = 3 * 60 * 1000;
   private idMap: Map<number, Request>;
 
-  constructor(sender: PacketSender) {
+  constructor(sender?: PacketSender) {
     this.sender = sender;
     this.idMap = new Map();
   }
 
+  public setSender(sender: PacketSender) {
+    this.sender = sender;
+  }
+
   public request(packet: RequestPacket): Promise<ResponsePacket> {
+    if (this.sender === undefined) {
+      return Promise.reject('no sender specified, cannot send packet');
+    }
     packet.id = this.idCount++;
     this.sender.send(packet);
     const result = new Promise<ResponsePacket>((resolve, reject) => {
