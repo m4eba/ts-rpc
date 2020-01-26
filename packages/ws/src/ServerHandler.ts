@@ -17,6 +17,7 @@ export class ServerHandler implements PacketHandler {
   }
 
   public onRequest(packet: RequestPacket, sender: PacketSender) {
+    debug('onRequest %o', packet);
     const idx = packet.method.indexOf('.');
     const name = packet.method.substr(0, idx);
     const method = packet.method.substr(idx);
@@ -32,6 +33,7 @@ export class ServerHandler implements PacketHandler {
           id: packet.id,
           result
         };
+        debug('resolved to %o', response);
         sender.send(response);
       })
       .catch((reason) => {
@@ -39,6 +41,7 @@ export class ServerHandler implements PacketHandler {
           id: packet.id,
           error: reason
         };
+        debug('error %o', error);
         sender.send(error);
       });
 
