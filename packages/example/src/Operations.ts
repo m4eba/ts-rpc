@@ -1,6 +1,5 @@
-
 export interface Summands {
-  n: number[]
+  n: number[];
 }
 
 export interface ArithmeticEvent {

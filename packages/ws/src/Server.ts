@@ -4,7 +4,6 @@ import { PacketHandler, Packet, PacketSender, handlePacket } from './Packet';
 
 const debug = Debug('ts-rpc-ws:Server');
 
-
 class ClientContext implements PacketSender {
   ws: WebSocket;
 

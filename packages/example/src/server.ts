@@ -4,7 +4,6 @@ import { resolveArithmeticService } from './rpc/ArithmeticServiceServer';
 import { ArithmeticService, Summands, ArithmeticEvent } from './Operations';
 import { ArithmeticEventServer } from './rpc/ArithmeticEventServer';
 
-
 class ArithmeticImpl implements ArithmeticService {
   public event: ArithmeticEvent | undefined;
 

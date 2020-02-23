@@ -1,5 +1,11 @@
-import { PacketHandler, PacketSender, RequestPacket, ResponsePacket, ErrorPacket, EventPacket } from "./Packet";
-
+import {
+  PacketHandler,
+  PacketSender,
+  RequestPacket,
+  ResponsePacket,
+  ErrorPacket,
+  EventPacket,
+} from './Packet';
 
 export class MultiHandler implements PacketHandler {
   private handler: Array<PacketHandler>;

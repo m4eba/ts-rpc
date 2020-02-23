@@ -1,6 +1,12 @@
 import Path from 'path';
-import { SourceFile, InterfaceDeclaration, SyntaxKind, TypeNode, ClassDeclaration, ImportDeclaration } from "ts-morph";
-
+import {
+  SourceFile,
+  InterfaceDeclaration,
+  SyntaxKind,
+  TypeNode,
+  ClassDeclaration,
+  ImportDeclaration,
+} from 'ts-morph';
 
 export interface Import {
   module: string;
@@ -9,7 +15,10 @@ export interface Import {
   defaultImport?: boolean;
 }
 
-export function importFromInterface(path: string, target: InterfaceDeclaration): Import | undefined {
+export function importFromInterface(
+  path: string,
+  target: InterfaceDeclaration
+): Import | undefined {
   if (!target.isExported()) {
     return undefined;
   }
@@ -17,11 +26,14 @@ export function importFromInterface(path: string, target: InterfaceDeclaration):
     module: path,
     name: target.getName(),
     alias: undefined,
-    defaultImport: target.isDefaultExport()
-  }
+    defaultImport: target.isDefaultExport(),
+  };
 }
 
-export function importFromClass(path: string, target: ClassDeclaration): Import | undefined {
+export function importFromClass(
+  path: string,
+  target: ClassDeclaration
+): Import | undefined {
   if (!target.isExported()) {
     return undefined;
   }
@@ -33,11 +45,14 @@ export function importFromClass(path: string, target: ClassDeclaration): Import 
     module: path,
     name: target.getName()!,
     alias: undefined,
-    defaultImport: target.isDefaultExport()
-  }
+    defaultImport: target.isDefaultExport(),
+  };
 }
 
-function moduleFromImportDeclaration(path: string, imp: ImportDeclaration): string {
+function moduleFromImportDeclaration(
+  path: string,
+  imp: ImportDeclaration
+): string {
   const value = imp.getModuleSpecifierValue();
   if (value.length === 0) {
     throw new Error('module empty name!');
@@ -49,7 +64,11 @@ function moduleFromImportDeclaration(path: string, imp: ImportDeclaration): stri
   }
 }
 
-export function searchImport(path: string, source: SourceFile, name: string): Import | undefined {
+export function searchImport(
+  path: string,
+  source: SourceFile,
+  name: string
+): Import | undefined {
   const imports = source.getImportDeclarations();
   for (let i = 0; i < imports.length; ++i) {
     const imp = imports[i];
@@ -61,8 +80,8 @@ export function searchImport(path: string, source: SourceFile, name: string): Im
         module: moduleFromImportDeclaration(path, imp),
         name,
         alias: undefined,
-        defaultImport: true
-      }
+        defaultImport: true,
+      };
     }
 
     // named export
@@ -76,8 +95,8 @@ export function searchImport(path: string, source: SourceFile, name: string): Im
             module: moduleFromImportDeclaration(path, imp),
             name: nimp.getName(),
             alias: alias.getText(),
-            defaultImport: false
-          }
+            defaultImport: false,
+          };
         }
       } else {
         if (nimp.getName() === name) {
@@ -85,18 +104,21 @@ export function searchImport(path: string, source: SourceFile, name: string): Im
             module: moduleFromImportDeclaration(path, imp),
             name: nimp.getName(),
             alias: undefined,
-            defaultImport: false
-          }
+            defaultImport: false,
+          };
         }
       }
     } // named export
-
   }
 
   return undefined;
 }
 
-export function importsFromParams(path: string, source: SourceFile, target: InterfaceDeclaration): Import[] {
+export function importsFromParams(
+  path: string,
+  source: SourceFile,
+  target: InterfaceDeclaration
+): Import[] {
   let result: Import[] = [];
   let types: string[] = [];
 
@@ -123,13 +145,14 @@ export function importsFromParams(path: string, source: SourceFile, target: Inte
   });
 
   types.forEach(t => {
-
     // search for interfaces
     const intf = source.getInterface(t);
     if (intf != undefined) {
       const i = importFromInterface(path, intf);
       if (i === undefined) {
-        console.log(`interface ${intf.getName()} is not exported but used in ${target.getName()} as parameter type`);
+        console.log(
+          `interface ${intf.getName()} is not exported but used in ${target.getName()} as parameter type`
+        );
         process.exit(1);
         return;
       }
@@ -142,7 +165,9 @@ export function importsFromParams(path: string, source: SourceFile, target: Inte
     if (classd != undefined) {
       const c = importFromClass(path, classd);
       if (c === undefined) {
-        console.log(`class ${classd.getName()} is not exported but used in ${target.getName()} as parameter type`);
+        console.log(
+          `class ${classd.getName()} is not exported but used in ${target.getName()} as parameter type`
+        );
         process.exit(1);
         return;
       }
@@ -182,8 +207,7 @@ export function writeImports(imports: Import[]): string {
   modules.forEach((imports, name) => {
     const defaultImport = imports.find(i => i.defaultImport);
     const namedImportNames = imports.reduce<Set<string>>((r, i) => {
-      if (!i.defaultImport)
-        r.add(aliasName(i));
+      if (!i.defaultImport) r.add(aliasName(i));
       return r;
     }, new Set<string>());
     let names: string[] = [];

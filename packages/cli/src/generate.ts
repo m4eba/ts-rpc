@@ -1,10 +1,11 @@
-import { InterfaceDeclaration, SyntaxKind } from "ts-morph";
-import { upperName, packagedMethodName } from "./utils";
-
-
+import { InterfaceDeclaration, SyntaxKind } from 'ts-morph';
+import { upperName, packagedMethodName } from './utils';
 
 // TODO refactor to remove duplicate code
-export function generateEventMessageInterface(target: InterfaceDeclaration, method: string): string {
+export function generateEventMessageInterface(
+  target: InterfaceDeclaration,
+  method: string
+): string {
   const name = upperName(method);
   const m = target.getMethod(method);
   if (m === undefined) {
@@ -23,10 +24,13 @@ export function generateEventMessageInterface(target: InterfaceDeclaration, meth
     export interface ${name}Message {
       ${params.join(';\n')}
     }
-  `
+  `;
 }
 
-export function generateServiceMessageInterface(target: InterfaceDeclaration, method: string): string {
+export function generateServiceMessageInterface(
+  target: InterfaceDeclaration,
+  method: string
+): string {
   const name = upperName(method);
   const m = target.getMethod(method);
   if (m === undefined) {
@@ -48,13 +52,10 @@ export function generateServiceMessageInterface(target: InterfaceDeclaration, me
     export interface ${name}Message {
       ${params.join(';\n')}
     }
-  `
+  `;
 }
 
-
-
 export function generateEventServer(target: InterfaceDeclaration): string {
-
   const methods: string[] = [];
   target.getMethods().forEach(m => {
     // TODO remove annotations/comments and use .print()
@@ -62,9 +63,14 @@ export function generateEventServer(target: InterfaceDeclaration): string {
     const name = upperName(m.getName());
     const pname = packagedMethodName(target, m);
     methods.push(`
-      public ${m.getName()}(${params.join(', ')}): ${m.getReturnType().getText()} {
+      public ${m.getName()}(${params.join(
+      ', '
+    )}): ${m.getReturnType().getText()} {
         const data:${name}Message = {
-          ${m.getParameters().map(p => p.getName()).join(',\n')}
+          ${m
+            .getParameters()
+            .map(p => p.getName())
+            .join(',\n')}
         }
         const packet: EventPacket = {
           method: '${pname}',
@@ -90,7 +96,6 @@ export function generateEventServer(target: InterfaceDeclaration): string {
 }
 
 export function generateEventClient(target: InterfaceDeclaration): string {
-
   const methods: string[] = [];
   target.getMethods().forEach(m => {
     // TODO remove annotations/comments and use .print()
@@ -125,9 +130,7 @@ export function generateEventClient(target: InterfaceDeclaration): string {
   `;
 }
 
-
 export function generateServiceServer(target: InterfaceDeclaration): string {
-
   const methods: string[] = [];
   target.getMethods().forEach(m => {
     // TODO remove annotations/comments and use .print()
@@ -154,7 +157,6 @@ export function generateServiceServer(target: InterfaceDeclaration): string {
 }
 
 export function generateServiceClient(target: InterfaceDeclaration): string {
-
   const methods: string[] = [];
   target.getMethods().forEach(m => {
     // TODO remove annotations/comments and use .print()
@@ -162,9 +164,14 @@ export function generateServiceClient(target: InterfaceDeclaration): string {
     const name = upperName(m.getName());
     const pname = packagedMethodName(target, m);
     methods.push(`
-      public async ${m.getName()}(${params.join(', ')}): ${m.getReturnType().getText()} {
+      public async ${m.getName()}(${params.join(
+      ', '
+    )}): ${m.getReturnType().getText()} {
         const data:${name}Message = {
-          ${m.getParameters().map(p => p.getName()).join(',\n')}
+          ${m
+            .getParameters()
+            .map(p => p.getName())
+            .join(',\n')}
         }
         const packet: RequestPacket = {
           id: 0,
@@ -190,6 +197,3 @@ export function generateServiceClient(target: InterfaceDeclaration): string {
     }
   `;
 }
-
-
-

@@ -1,5 +1,3 @@
-
-
 export interface RequestPacket {
   id: number;
   method: string;
@@ -53,7 +51,11 @@ export function isEvent(packet: Packet): packet is EventPacket {
   return p.method != undefined && p.result === undefined && p.id === undefined;
 }
 
-export function handlePacket(data: string, handler: PacketHandler, sender: PacketSender): void {
+export function handlePacket(
+  data: string,
+  handler: PacketHandler,
+  sender: PacketSender
+): void {
   const packet = JSON.parse(data);
   if (isRequest(packet)) {
     handler.onRequest(packet, sender);
@@ -73,4 +75,3 @@ export function handlePacket(data: string, handler: PacketHandler, sender: Packe
   }
   throw new Error(`maleformed packet: ${data}`);
 }
-

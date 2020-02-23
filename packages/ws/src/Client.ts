@@ -20,30 +20,31 @@ export class Client extends EventEmitter implements PacketSender {
 
   public async connect(): Promise<Client> {
     // TODO reject if connection fails, timeout???
-    let result = new Promise<Client>(((resolve: any) => {
+    let result = new Promise<Client>(
+      ((resolve: any) => {
+        this.ws = new WebSocket(this.address);
+        this.emit('connecting');
+        debug('connecting');
 
-      this.ws = new WebSocket(this.address);
-      this.emit('connecting');
-      debug('connecting');
-
-      this.ws.on('open', () => {
-        debug('connection open');
-        this.ready = true;
-        this.emit('open');
-        this.sendQueue();
-        resolve(this);
-      });
-      this.ws.on('message', (data: string) => {
-        debug('message received: msg %s', data);
-        this.handleData(data);
-      });
-      this.ws.on('close', () => {
-        debug('connection closed');
-        this.emit('close');
-        this.ready = false;
-        this.ws = null;
-      });
-    }).bind(this));
+        this.ws.on('open', () => {
+          debug('connection open');
+          this.ready = true;
+          this.emit('open');
+          this.sendQueue();
+          resolve(this);
+        });
+        this.ws.on('message', (data: string) => {
+          debug('message received: msg %s', data);
+          this.handleData(data);
+        });
+        this.ws.on('close', () => {
+          debug('connection closed');
+          this.emit('close');
+          this.ready = false;
+          this.ws = null;
+        });
+      }).bind(this)
+    );
     return result;
   }
 
@@ -68,8 +69,7 @@ export class Client extends EventEmitter implements PacketSender {
 
   private handleData(data: string) {
     try {
-      if (this.ws != null)
-        handlePacket(data, this.handler, this);
+      if (this.ws != null) handlePacket(data, this.handler, this);
     } catch (e) {
       debug('unable to handle packet %o, %s', e, data);
       return;

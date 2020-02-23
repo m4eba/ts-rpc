@@ -1,4 +1,10 @@
-import { PacketHandler, RequestPacket, ResponsePacket, PacketSender, ErrorPacket } from "./Packet";
+import {
+  PacketHandler,
+  RequestPacket,
+  ResponsePacket,
+  PacketSender,
+  ErrorPacket,
+} from './Packet';
 
 interface Request {
   id: number;
@@ -34,7 +40,7 @@ export class ClientRequestHandler implements PacketHandler {
         reject,
         timeout: setTimeout(() => {
           this.requestTimeout(packet.id);
-        }, this.timeout)
+        }, this.timeout),
       });
     });
     return result;
@@ -48,8 +54,8 @@ export class ClientRequestHandler implements PacketHandler {
     req.reject(packet.error);
     this.idMap.delete(packet.id);
   }
-  public onEvent(): void { }
-  public onRequest(): void { }
+  public onEvent(): void {}
+  public onRequest(): void {}
   public onResponse(packet: ResponsePacket): void {
     const req = this.idMap.get(packet.id);
     if (req === undefined) {

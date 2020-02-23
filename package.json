@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "scripts": {
+    "prettier": "prettier --write 'packages/**/**/*.ts'",
     "lint": "eslint 'packages/**/**/*.ts'",
     "lint-fix": "eslint 'packages/**/**/*.ts' --fix"
   },

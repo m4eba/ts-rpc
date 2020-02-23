@@ -1,5 +1,11 @@
 import Debug from 'debug';
-import { PacketHandler, PacketSender, RequestPacket, ErrorPacket, ResponsePacket } from "./Packet";
+import {
+  PacketHandler,
+  PacketSender,
+  RequestPacket,
+  ErrorPacket,
+  ResponsePacket,
+} from './Packet';
 
 const debug = Debug('ts-rpc-ws:ServerHandler');
 
@@ -8,9 +14,7 @@ export type ServiceResolver = (method: string, params: any) => Promise<any>;
 export class ServerHandler implements PacketHandler {
   private services: Map<string, ServiceResolver> = new Map();
 
-  constructor() {
-
-  }
+  constructor() {}
 
   public registerService(name: string, resolver: ServiceResolver) {
     this.services.set(name, resolver);
@@ -31,20 +35,19 @@ export class ServerHandler implements PacketHandler {
       .then(result => {
         const response: ResponsePacket = {
           id: packet.id,
-          result
+          result,
         };
         debug('resolved to %o', response);
         sender.send(response);
       })
-      .catch((reason) => {
+      .catch(reason => {
         const error: ErrorPacket = {
           id: packet.id,
-          error: reason
+          error: reason,
         };
         debug('error %o', error);
         sender.send(error);
       });
-
   }
 
   public onResponse() {

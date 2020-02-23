@@ -8,12 +8,12 @@ import { ArithmeticServiceClient } from './rpc/ArithmeticServiceClient';
   const event: ArithmeticEvent = {
     addition() {
       console.log('event', arguments);
-    }
-  }
-  const requestHandler = new ClientRequestHandler()
+    },
+  };
+  const requestHandler = new ClientRequestHandler();
   const handler = new MultiHandler([
     new ArithmeticEventClient(event),
-    requestHandler
+    requestHandler,
   ]);
   const client = new Client('ws://localhost:5432', handler);
   requestHandler.setSender(client);
@@ -22,4 +22,4 @@ import { ArithmeticServiceClient } from './rpc/ArithmeticServiceClient';
   const service = new ArithmeticServiceClient(requestHandler);
   const result = await service.add({ n: [1, 2, 3] });
   console.log('result', result);
-})()
+})();
