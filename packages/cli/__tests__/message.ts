@@ -52,6 +52,7 @@ test('message 2 params', async () => {
 
   const i = file.getInterfaceOrThrow('Event');
   const source = generateEventMessageInterface(i, 'hello');
+  console.log(source);
   const genFile = project.createSourceFile('gen.ts', source);
 
   const msg = genFile.getInterfaceOrThrow('HelloMessage');
@@ -63,10 +64,10 @@ test('message 2 params', async () => {
       .getType()
       .getText()
   ).toBe('string');
-  expect(msg.getProperties()[0].getName()).toBe('length');
+  expect(msg.getProperties()[1].getName()).toBe('length');
   expect(
     msg
-      .getProperties()[0]
+      .getProperties()[1]
       .getType()
       .getText()
   ).toBe('number');
