@@ -1,5 +1,5 @@
 import { Project, ScriptTarget } from 'ts-morph';
-import { findServiceInterface, findEventInterface } from '../src/utils';
+import { findInterfaces, allInterfacesExcept } from '../src/utils';
 
 function createProject() {
   const project: Project = new Project({
@@ -10,7 +10,26 @@ function createProject() {
   return project;
 }
 
-test('find interfaces', async () => {
+test('find all interfaces', async () => {
+  const project = createProject();
+  const file = project.createSourceFile(
+    'test.ts',
+    `
+  interface Test1 {}
+  interface Test2 {}
+  interface Test3 {}
+  `
+  );
+
+  const s = allInterfacesExcept(file, []);
+
+  expect(s.length).toBe(3);
+  expect(s[0]).toBe(file.getInterface('Test1'));
+  expect(s[1]).toBe(file.getInterface('Test2'));
+  expect(s[2]).toBe(file.getInterface('Test3'));
+});
+
+test('find event interfaces', async () => {
   const project = createProject();
   const file = project.createSourceFile(
     'test.ts',
@@ -20,11 +39,13 @@ test('find interfaces', async () => {
   `
   );
 
-  const i = findEventInterface(file);
-  const s = findServiceInterface(file);
+  const i = findInterfaces(file, ['Event']);
+  const s = allInterfacesExcept(file, i);
 
-  expect(i).toBe(file.getInterface('Event'));
-  expect(s).toBe(file.getInterface('Service'));
+  expect(i.length).toBe(1);
+  expect(i[0]).toBe(file.getInterface('Event'));
+  expect(s.length).toBe(1);
+  expect(s[0]).toBe(file.getInterface('Service'));
 });
 
 test('missing interface', async () => {
@@ -37,10 +58,38 @@ test('missing interface', async () => {
   `
   );
 
-  expect.assertions(1);
-  try {
-    findEventInterface(file);
-  } catch (e) {
-    expect(e.toString()).toBe('Error: no event interface found');
+  const i = findInterfaces(file, ['Test']);
+  expect(i.length).toBe(0);
+});
+
+test('interface inside namespace', async () => {
+  const project = createProject();
+  const file = project.createSourceFile(
+    'test.ts',
+    `
+  namespace ns {  
+    interface Test {}
   }
+  `
+  );
+
+  const i = findInterfaces(file, ['Test']);
+  expect(i.length).toBe(1);
+});
+
+test('interface inside 2x namespace', async () => {
+  const project = createProject();
+  const file = project.createSourceFile(
+    'test.ts',
+    `
+  namespace ns {
+    namespace ns2 {  
+      interface Test {}
+    }
+  }
+  `
+  );
+
+  const i = findInterfaces(file, ['Test']);
+  expect(i.length).toBe(1);
 });

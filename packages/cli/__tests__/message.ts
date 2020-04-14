@@ -52,7 +52,6 @@ test('message 2 params', async () => {
 
   const i = file.getInterfaceOrThrow('Event');
   const source = generateEventMessageInterface(i, 'hello');
-  console.log(source);
   const genFile = project.createSourceFile('gen.ts', source);
 
   const msg = genFile.getInterfaceOrThrow('HelloMessage');

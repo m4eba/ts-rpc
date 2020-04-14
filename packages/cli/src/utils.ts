@@ -15,6 +15,7 @@ export function packagedMethodName(
   method: MethodSignature
 ): string {
   let name = target.getName();
+  // TODO don't need this anymore?
   ['Event', 'Service'].forEach(e => {
     if (name.endsWith(e)) {
       name = name.substr(0, name.length - e.length);
@@ -23,31 +24,43 @@ export function packagedMethodName(
   return `${name}.${method.getName()}`;
 }
 
-export function findInterface(
+export function findInterfaces(
   file: SourceFile,
-  pattern: string
-): InterfaceDeclaration | undefined {
-  return file.forEachChild(node => {
+  pattern: Array<string>
+): InterfaceDeclaration[] {
+  const result: Array<InterfaceDeclaration> = [];
+
+  const reg = pattern.map(p => RegExp(p));
+  file.forEachDescendant((node, traversal) => {
     if (node.getKind() === SyntaxKind.InterfaceDeclaration) {
-      const i = node as InterfaceDeclaration;
-      if (i.getName().endsWith(pattern)) {
-        return i;
+      const intf = node as InterfaceDeclaration;
+      traversal.skip();
+      for (let i = 0; i < reg.length; ++i) {
+        if (reg[i].test(intf.getName())) {
+          result.push(intf);
+        }
       }
     }
     return undefined;
   });
-}
 
-export function findServiceInterface(file: SourceFile): InterfaceDeclaration {
-  const result = findInterface(file, 'Service');
-
-  if (result === undefined) throw new Error('no service interface found');
   return result;
 }
 
-export function findEventInterface(file: SourceFile): InterfaceDeclaration {
-  const result = findInterface(file, 'Event');
+export function allInterfacesExcept(
+  file: SourceFile,
+  expect: InterfaceDeclaration[]
+): InterfaceDeclaration[] {
+  const result: Array<InterfaceDeclaration> = [];
 
-  if (result === undefined) throw new Error('no event interface found');
+  file.forEachDescendant((node, traversal) => {
+    if (node.getKind() === SyntaxKind.InterfaceDeclaration) {
+      const ni = node as InterfaceDeclaration;
+      if (expect.indexOf(ni) < 0) {
+        result.push(ni);
+      }
+      traversal.skip();
+    }
+  });
   return result;
 }
