@@ -6,7 +6,7 @@
   "author": "m4eba <m4eba.0@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "generate": "ts-rpc -r src -i src/Operations.ts -o src/rpc",
+    "generate": "ts-rpc -r src --event-match '.*Event' --service-match '.Service' -i src/Operations.ts -o src/rpc",
     "compile": "tsc -b .",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },

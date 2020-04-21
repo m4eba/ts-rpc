@@ -10,13 +10,16 @@ export class ArithmeticEventClient implements PacketHandler {
     this.eventHandler = eventHandler;
   }
 
-  public onRequest(): void {}
-  public onResponse(): void {}
-  public onError(): void {}
+  public onRequest(): void { }
+  public onResponse(): void { }
+  public onError(): void { }
   public onEvent(packet: EventPacket): void {
+
     if (packet.method === 'Arithmetic.addition') {
       const data: AdditionMessage = packet.params as AdditionMessage;
       this.eventHandler.addition(data.summands, data.result);
     }
+
   }
+
 }
