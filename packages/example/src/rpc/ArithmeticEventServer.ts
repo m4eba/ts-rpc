@@ -10,17 +10,15 @@ export class ArithmeticEventServer implements ArithmeticEvent {
     this.sender = sender;
   }
 
-
   public addition(summands: Summands, result: number): void {
     const data: AdditionMessage = {
       summands,
-      result
-    }
+      result,
+    };
     const packet: EventPacket = {
       method: 'Arithmetic.addition',
-      params: data
-    }
+      params: data,
+    };
     this.sender.send(packet);
   }
-
 }
