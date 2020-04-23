@@ -28,5 +28,8 @@
     "hooks": {
       "pre-commit": "npm run precommit"
     }
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
