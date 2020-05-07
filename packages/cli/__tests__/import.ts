@@ -1,5 +1,5 @@
 import { Project, ScriptTarget } from 'ts-morph';
-import { importFromInterface } from '../src/imports';
+import { importFromInterface, importsFromParams } from '../src/imports';
 
 function createProject() {
   const project: Project = new Project({
@@ -69,5 +69,37 @@ test('interface import inside namespace', async () => {
     name: 'Test',
     alias: undefined,
     defaultImport: false,
+  });
+});
+
+test('param import from namespace in second file', async () => {
+  const project = createProject();
+  project.createSourceFile(
+    'message.ts',
+    `
+  export namespace ns {
+    export interface Message {}
+  }  
+  `
+  );
+  const file2 = project.createSourceFile(
+    'test.ts',
+    `
+    import ns from './message';
+    interface Event {
+      hello(msg:ns.Message):void;
+    }
+  `
+  );
+
+  const i = file2.getInterfaceOrThrow('Event');
+  const imp = importsFromParams('./', file2, i);
+
+  expect(imp).toHaveLength(1);
+  expect(imp[0]).toEqual({
+    module: 'message',
+    name: 'ns',
+    alias: undefined,
+    defaultImport: true,
   });
 });

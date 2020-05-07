@@ -1,4 +1,4 @@
-import Path from 'path';
+import * as Path from 'path';
 import {
   SourceFile,
   InterfaceDeclaration,
@@ -70,15 +70,19 @@ export function searchImport(
   name: string
 ): Import | undefined {
   const imports = source.getImportDeclarations();
+  const qname = name.split('.')[0];
   for (let i = 0; i < imports.length; ++i) {
     const imp = imports[i];
 
     // default export
     const def = imp.getDefaultImport();
-    if (def !== undefined) {
+    if (
+      def !== undefined &&
+      (def.getText() === qname || def.getText() === '*')
+    ) {
       return {
         module: moduleFromImportDeclaration(path, imp),
-        name,
+        name: qname,
         alias: undefined,
         defaultImport: true,
       };
@@ -90,7 +94,7 @@ export function searchImport(
       const nimp = named[ii];
       const alias = nimp.getAliasNode();
       if (alias != undefined) {
-        if (alias.getText() === name) {
+        if (alias.getText() === qname) {
           return {
             module: moduleFromImportDeclaration(path, imp),
             name: nimp.getName(),
@@ -99,7 +103,7 @@ export function searchImport(
           };
         }
       } else {
-        if (nimp.getName() === name) {
+        if (nimp.getName() === qname) {
           return {
             module: moduleFromImportDeclaration(path, imp),
             name: nimp.getName(),
@@ -126,11 +130,16 @@ export function importsFromParams(
     if (node.getKind() === SyntaxKind.TypeReference) {
       const ident = node.getChildAtIndexIfKind(0, SyntaxKind.Identifier);
       if (ident === undefined) {
-        console.log('ident undefined????');
-        process.exit(1);
-        return;
+        const qname = node.getChildAtIndexIfKind(0, SyntaxKind.QualifiedName);
+        if (qname !== undefined) {
+          types.push(qname.getText());
+        } else {
+          console.log('unable to extract parameter type', node);
+          process.exit(1);
+        }
+      } else {
+        types.push(ident.getText());
       }
-      types.push(ident.getText());
       //console.log(node.getText());
       //console.log(ident.getText());
     }
