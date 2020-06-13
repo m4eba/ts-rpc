@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
-import EventEmitter from 'events';
 import Debug from 'debug';
 import { Packet, PacketHandler, handlePacket, PacketSender } from './Packet';
+import { EventEmitter } from 'events';
 
 const debug = Debug('ts-rpc-ws:Client');
 

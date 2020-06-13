@@ -109,7 +109,7 @@ const project = new Project({
   //tsConfigFilePath:args.tsconfig
 });
 
-project.addExistingSourceFiles(args.input);
+project.addSourceFilesAtPaths(args.input);
 
 async function handleEvents(
   file: SourceFile,
